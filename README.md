@@ -30,7 +30,7 @@ Installation:
 
 ![image](https://github.com/a50397/shopify_test_discount_function/assets/6513984/207795d7-9ba7-4364-aaac-ad8865d7540f)
    
-8. add products to the cart and test the discount on checkout
+8. add products to the cart and test the discount at checkout
 9. check app logs `Shopify Partners` -> `Stores` -> select store -> select app -> `Extensions` -> select extension -> scroll down -> `See details`
 
 ![image](https://github.com/a50397/shopify_test_discount_function/assets/6513984/4d2e96ed-0b04-4073-9e39-4b1e5a0ddbfa)
