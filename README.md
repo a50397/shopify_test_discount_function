@@ -1,7 +1,7 @@
 ## Simple Shopify discount function
 
-This app can be used to create a dumb discount that will apply X% discount to every Nth line in the order. This logic is defined in extensions/product-discount/src/index.js file.
-Editing the discount partameters for existing discounts is not implemented.
+A simple discount app that will create `Apply X% discount on every Nth line in an order` discounts. To change this logic, edit extensions/product-discount/src/index.js. 
+Modification of discount parameters for existing discounts is not implemented.
 
 Installation:
 
