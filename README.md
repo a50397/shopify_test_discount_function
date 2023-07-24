@@ -10,7 +10,7 @@ Installation:
 3. cd `shopify_test_discount_function`
 4. run `yarn` to install the packages
 5. run `yarn deploy` to deploy the extension
-    - log in to Shopify Partners if necessary
+    - if prompted, sign in to Shopify Partners
     - create a new app
     - input a name for the new app
     - confirm `Yes, deploy to push changes`
