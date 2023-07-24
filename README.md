@@ -19,8 +19,8 @@ Installation:
 
 6. run `yarn dev` to run the app backend 
     - don't create a new app `No, connect it to an existing app`
-    - select the app created in the previous step from the list
-    - select the dev store from the list (if you have more than one)
+    - select the app created in the previous step
+    - select the dev store (if you have more than one)
     - select `(1) Always by default`
     - open the `Preview URL` displayed by the CLI and install the app
 
