@@ -35,7 +35,7 @@ export default /**
     const targets = input.cart.lines.filter(line => line.merchandise.__typename == "ProductVariant")
       // Only include cart lines with a quantity of two or more
       // and a targetable product variant
-      .filter((_, index) => index%configuration.quantity == 0)
+      .filter((_, index) => (index + 1)%configuration.quantity == 0)
       .map(line => {
         const variant = /** @type {ProductVariant} */ (line.merchandise);
         return /** @type {Target} */ ({

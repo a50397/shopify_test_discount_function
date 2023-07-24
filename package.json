@@ -1,5 +1,5 @@
 {
-  "name": "discount-application-rust-test",
+  "name": "shopify_test_discount_function",
   "version": "1.0.0",
   "main": "web/index.js",
   "license": "UNLICENSED",
