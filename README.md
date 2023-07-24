@@ -5,12 +5,12 @@ Modification of discount parameters for existing discounts is not implemented.
 
 Installation:
 
-1. make sure you have a dev store [dev store](https://shopify.dev/docs/apps/tools/development-stores#create-a-development-store-to-test-your-app) 
+1. make sure you have a [dev store](https://shopify.dev/docs/apps/tools/development-stores#create-a-development-store-to-test-your-app) 
 2. clone this repo
 3. cd `shopify_test_discount_function`
 4. run `yarn` to install the packages
 5. run `yarn deploy` to deploy the extension
-    - login to login to Shopify Partners if necessary
+    - log in to Shopify Partners if necessary
     - create a new app
     - input a name for the new app
     - confirm `Yes, deploy to push changes`
@@ -18,9 +18,9 @@ Installation:
 ![image](https://github.com/a50397/shopify_test_discount_function/assets/6513984/7ab56975-a252-4827-a110-b28f7e255b6d)
 
 6. run `yarn dev` to run the app backend 
-    - answer `No, connect it to an existing app`
+    - don't create a new app `No, connect it to an existing app`
     - select your new app from the list
-    - select the dev store from the list (if you have more than one dev store)
+    - select the dev store from the list (if you have more than one)
     - select `(1) Always by default`
     - open the `Preview URL` displayed by the CLI and install the app
 
