@@ -1,0 +1,15 @@
+
+# Env variables for the CLI process
+SHOPIFY_CLI_1P_DEV=1
+SHOPIFY_CLI_ORGANIZATION=9082
+SHOPIFY_FLAG_APP_API_KEY=x-shopify_test_discount_function-key
+SHOPIFY_FLAG_STORE=1p-development-store-1
+SHOPIFY_CLI_COLUMNS=300
+
+# Env variables for the Rails process
+SHOPIFY_API_KEY=x-shopify_test_discount_function-key
+SHOPIFY_API_SECRET=x-shopify_test_discount_function-secret
+# Env variables for the Functions extensions
+CARGO_HOME=/home/spin/.rust
+RUSTUP_HOME=/home/spin/.rust
+PATH=/home/spin/.rust/bin:$PATH

@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+
+# This has to match the shop id inside development_config.yml
+SHOP_ID=9
+echo "Trying to install Rust"
+rustup toolchain install 1.66.1
+rustup override set 1.66.1
+
+cargo install cargo-wasi
+
+FILE=Cargo.toml
+if test -f "$FILE"; then
+    git update-index --assume-unchanged $FILE
+    rm -f $FILE
+fi

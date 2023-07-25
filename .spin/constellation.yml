@@ -1,0 +1,7 @@
+schema: v1
+extend: partners
+resources_profile: 3xlarge
+repos:
+  - shopify_test_discount_function
+  - script-service
+  - runtime-engine
