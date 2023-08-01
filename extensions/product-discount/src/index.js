@@ -48,7 +48,7 @@ export default /**
 
     if (!targets.length) {
       // You can use STDERR for debug logs in your function
-      console.error("No cart lines qualify for volume discount.");
+      console.error("No cart lines qualify for product discount.");
       return EMPTY_DISCOUNT;
     }
 

@@ -9,6 +9,14 @@ import productCreator from "./product-creator.js";
 import GDPRWebhookHandlers from "./gdpr.js";
 import { GraphqlQueryError } from '@shopify/shopify-api';
 
+import {
+  CREATE_CODE_MUTATION,
+  UPDATE_CODE_MUTATION,
+  CREATE_AUTOMATIC_MUTATION,
+  UPDATE_AUTOMATIC_MUTATION,
+  QUERY_FUNCTION_DISCOUNTS
+} from "./graphql/index.js";
+
 const PORT = parseInt(
   process.env.BACKEND_PORT || process.env.PORT || "3000",
   10
@@ -18,32 +26,6 @@ const STATIC_PATH =
   process.env.NODE_ENV === "production"
     ? `${process.cwd()}/frontend/dist`
     : `${process.cwd()}/frontend/`;
-
-const CREATE_CODE_MUTATION = `
-  mutation CreateCodeDiscount($discount: DiscountCodeAppInput!) {
-    discountCreate: discountCodeAppCreate(codeAppDiscount: $discount) {
-      userErrors {
-        code
-        message
-        field
-      }
-    }
-  }
-`;
-
-const CREATE_AUTOMATIC_MUTATION = `
-  mutation CreateAutomaticDiscount($discount: DiscountAutomaticAppInput!) {
-    discountCreate: discountAutomaticAppCreate(
-      automaticAppDiscount: $discount
-    ) {
-      userErrors {
-        code
-        message
-        field
-      }
-    }
-  }
-`;
 
 const app = express();
 
@@ -70,21 +52,75 @@ app.use(express.json());
 app.post("/api/discounts/code", async (req, res) => {
   await runDiscountMutation(req, res, CREATE_CODE_MUTATION);
 });
+// Endpoint to update code-based discounts
+app.post("/api/discounts/code/*", async (req, res) => {
+  const id = req.params[0].replace('gid:/', 'gid://');
+  await runDiscountMutation(req, res, UPDATE_CODE_MUTATION, id);
+});
 // Endpoint to create automatic discounts
 app.post("/api/discounts/automatic", async (req, res) => {
   await runDiscountMutation(req, res, CREATE_AUTOMATIC_MUTATION);
 });
+// Endpoint to update automatic discounts
+app.post("/api/discounts/automatic/*", async (req, res) => {
+  const id = req.params[0].replace('gid:/', 'gid://');
+  await runDiscountMutation(req, res, UPDATE_AUTOMATIC_MUTATION, id);
+});
+// Endpoint to query discount details
+app.post("/api/discounts/details/:id", async (req, res) => {
+  var node_id = 'gid://shopify/DiscountCodeNode/' + req.params.id;
+  var details = await runDiscountQuery(req, res, QUERY_FUNCTION_DISCOUNTS, node_id);
+  if (!details?.data?.discountNode?.discount?.title) {
+    node_id = 'gid://shopify/DiscountAutomaticNode/' + req.params.id;
+    details = await runDiscountQuery(req, res, QUERY_FUNCTION_DISCOUNTS, node_id);
+  }
+  console.log(details?.data?.discountNode);
+  res.send(details?.data?.discountNode || {});
+});
 
-const runDiscountMutation = async (req, res, mutation) => {
+const runDiscountQuery = async (req, res, query, id) => {
   const graphqlClient = new shopify.api.clients.Graphql({
     session: res.locals.shopify.session,
   });
+
+  const variables = id ? {
+    id,
+    ...req.body
+  } : req.body;
+
+  try {
+    const data = await graphqlClient.query({
+      data: {
+        query: query,
+        variables,
+      },
+    });
+
+    return data.body;
+  } catch (error) {
+    // Handle errors thrown by the GraphQL client
+    if (!(error instanceof GraphqlQueryError)) {
+      throw error;
+    }
+    return res.status(500).send({ error: error.response });
+  }
+};
+
+const runDiscountMutation = async (req, res, mutation, id) => {
+  const graphqlClient = new shopify.api.clients.Graphql({
+    session: res.locals.shopify.session,
+  });
+
+  const variables = id ? {
+    id,
+    ...req.body
+  } : req.body;
 
   try {
     const data = await graphqlClient.query({
       data: {
         query: mutation,
-        variables: req.body,
+        variables,
       },
     });
 
@@ -106,6 +142,20 @@ app.get("/api/products/count", async (_req, res) => {
 });
 
 app.get("/api/products/create", async (_req, res) => {
+  let status = 200;
+  let error = null;
+
+  try {
+    await productCreator(res.locals.shopify.session);
+  } catch (e) {
+    console.log(`Failed to process products/create: ${e.message}`);
+    status = 500;
+    error = e.message;
+  }
+  res.status(status).send({ success: status === 200, error });
+});
+
+app.get("/api/products/details/:id", async (_req, res) => {
   let status = 200;
   let error = null;
 

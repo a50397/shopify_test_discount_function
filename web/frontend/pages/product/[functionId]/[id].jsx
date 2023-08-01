@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import { useParams } from "react-router-dom";
 import { useForm, useField } from "@shopify/react-form";
 import { CurrencyCode } from "@shopify/react-i18n";
@@ -24,15 +25,80 @@ import {
     Stack,
     PageActions,
 } from "@shopify/polaris";
-import { data } from "@shopify/app-bridge/actions/Modal";
 import { useAuthenticatedFetch } from "../../../hooks";
 const todaysDate = new Date();
 // Metafield that will be used for storing function configuration
-const METAFIELD_NAMESPACE = "$app:volume-discount";
+const METAFIELD_NAMESPACE = "$app:product-discount";
 const METAFIELD_CONFIGURATION_KEY = "function-configuration";
-export default function VolumeNew() {
+
+export default function ProductDetailsFetcher() {
+    const { functionId, id } = useParams();
+    const [discount, setDiscount] = useState(null);
+    const authenticatedFetch = useAuthenticatedFetch();
+
+    useEffect(() => {
+        const fetchDiscountDetails = async() => {
+            return authenticatedFetch(`/api/discounts/details/${id}`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+            });
+        }
+
+        fetchDiscountDetails()
+        .then(response =>
+            response.json()
+        )
+        .then(data => {
+            if (!data) return setDiscount("Error loading discount");
+            let metafields = {
+                percentage: 0,
+                quantity: 1
+            }
+            if (data.metafields?.edges.length > 0) {
+                try {
+                    metafields = JSON.parse(data.metafields.edges[0].node.value);
+                } catch (e) {
+                    console.error(data, e);
+                }
+            }
+            data.metafields = {
+                value: metafields,
+                id: data.metafields?.edges[0]?.node?.id,
+            };
+            if (data?.discount?.startsAt){
+                try {
+                    data.discount.startsAt = new Date(data.discount.startsAt);
+                } catch (e) {
+                    console.error(e);
+                }
+            }
+
+            if (data?.discount?.endsAt){
+                try {
+                    data.discount.endsAt = new Date(data.discount.endsAt);
+                } catch (e) {
+                    console.error(e);
+                }
+            }
+
+            setDiscount(data);
+        })
+        .catch(console.error);
+    }, []);
+
+    if (!discount) {
+        return <div>Loading discount id {id}...</div>;
+    } else if (discount === "Error loading discount") {
+        return <div>Error loading discount id {id}</div>;
+    }
+
+    return <ProductDetails functionId={functionId} discount={discount} />;
+}
+
+export function ProductDetails({functionId, discount}) {
+    console.log('0000', discount)
+    console.log(discount?.discount?.startsAt)
     // Read the function ID from the URL
-    const { functionId } = useParams();
 
     const app = useAppBridge();
     const redirect = Redirect.create(app);
@@ -63,38 +129,39 @@ export default function VolumeNew() {
         makeClean,
     } = useForm({
         fields: {
-            discountTitle: useField(""),
-            discountMethod: useField(DiscountMethod.Code),
-            discountCode: useField(""),
+            discountTitle: useField(discount?.discount?.title || ''),
+            discountMethod: useField(
+                discount?.discount?.discountId.includes('Code') ?
+                    DiscountMethod.Code : DiscountMethod.Automatic
+            ),
+            discountCode: useField(discount?.discount?.title || ''),
             combinesWith: useField({
-                orderDiscounts: false,
-                productDiscounts: false,
-                shippingDiscounts: false,
+                orderDiscounts: discount?.discount?.combinesWith?.orderDiscounts || false,
+                productDiscounts: discount?.discount?.combinesWith?.productDiscounts || false,
+                shippingDiscounts: discount?.discount?.combinesWith?.shippingDiscounts || false,
             }),
             requirementType: useField(RequirementType.None),
             requirementSubtotal: useField("0"),
             requirementQuantity: useField("0"),
-            usageTotalLimit: useField(null),
-            usageOncePerCustomer: useField(false),
-            startDate: useField(todaysDate),
-            endDate: useField(null),
+            usageTotalLimit: useField(discount?.discount?.usageLimit || null),
+            usageOncePerCustomer: useField(discount?.discount?.appliesOncePerCustomer || false),
+            startDate: useField(discount?.discount?.startsAt || todaysDate),
+            endDate: useField(discount?.discount?.endsAt || null),
             configuration: {
-                quantity: useField('1'),
-                percentage: useField('0'),
+                quantity: useField(discount.metafields.value.quantity || '1'),
+                percentage: useField(discount.metafields.value.percentage || '0'),
             },
         },
         onSubmit: async (form) => {
             // Create the discount using the added express endpoints
-            const discount = {
+            const input = {
                 functionId,
                 combinesWith: form.combinesWith,
                 startsAt: form.startDate,
                 endsAt: form.endDate,
                 metafields: [
                     {
-                        namespace: METAFIELD_NAMESPACE,
-                        key: METAFIELD_CONFIGURATION_KEY,
-                        type: "json",
+                        id: discount.metafields.id,
                         value: JSON.stringify({
                             quantity: parseInt(form.configuration.quantity),
                             percentage: parseFloat(form.configuration.percentage),
@@ -105,23 +172,25 @@ export default function VolumeNew() {
 
             let response;
             if (form.discountMethod === DiscountMethod.Automatic) {
-                response = await authenticatedFetch("/api/discounts/automatic", {
+                response = await authenticatedFetch(`/api/discounts/automatic/${discount?.discount?.discountId}`, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({
-                        discount: {
-                          ...discount,
+                        automaticAppDiscount: {
+                          ...input,
                           title: form.discountTitle,
                         },
                       }),
                 });
             } else {
-                response = await authenticatedFetch("/api/discounts/code", {
+                input.appliesOncePerCustomer = form.usageOncePerCustomer;
+                if (form.usageTotalLimit) input.usageLimit = Number.parseInt(form.usageTotalLimit);
+                response = await authenticatedFetch(`/api/discounts/code/${discount?.discount?.discountId}`, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({
-                        discount: {
-                          ...discount,
+                        codeAppDiscount: {
+                          ...input,
                           title: form.discountCode,
                           code: form.discountCode,
                         },
@@ -130,7 +199,9 @@ export default function VolumeNew() {
             }
 
             const data = (await response.json()).data;
-            const remoteErrors = data.discountCreate.userErrors;
+            const remoteErrors = discount?.discount?.discountId.includes('Code') ?
+                data.discountCodeAppUpdate.userErrors :
+                data.discountAutomaticAppUpdate.userErrors;
             if (remoteErrors.length > 0) {
                 return { status: "fail", errors: remoteErrors };
             }
@@ -138,6 +209,7 @@ export default function VolumeNew() {
             redirect.dispatch(Redirect.Action.ADMIN_SECTION, {
                 name: Redirect.ResourceType.Discount,
             });
+
             return { status: "success" };
         },
     });
@@ -163,7 +235,7 @@ export default function VolumeNew() {
     return (
         // Render a discount form using Polaris components and the discount app components
         <Page
-            title="Create volume discount"
+            title="Edit product discount"
             breadcrumbs={[
                 {
                     content: "Discounts",
@@ -182,14 +254,16 @@ export default function VolumeNew() {
                 <Layout.Section>
                     <form onSubmit={submit}>
                         <MethodCard
-                            title="Volume"
+                            discountMethodHidden={true}
+                            readonly={true}
+                            title="Product"
                             discountTitle={discountTitle}
                             discountClass={DiscountClass.Product}
                             discountCode={discountCode}
                             discountMethod={discountMethod}
                         />
                         { /* Collect data for the configuration metafield. */ }
-                        <Card title="Volume">
+                        <Card title="Product">
                             <Card.Section>
                                 <Stack>
                                 <TextField label="Every Xth item" {...configuration.quantity} />
