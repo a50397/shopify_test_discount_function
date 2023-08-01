@@ -95,8 +95,7 @@ export default function ProductDetailsFetcher() {
 }
 
 export function ProductDetails({functionId, discount}) {
-    console.log('0000', discount)
-    console.log(discount?.discount?.startsAt)
+    console.log('DISCOUNT', discount)
     // Read the function ID from the URL
 
     const app = useAppBridge();

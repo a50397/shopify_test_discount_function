@@ -74,7 +74,6 @@ app.post("/api/discounts/details/:id", async (req, res) => {
     node_id = 'gid://shopify/DiscountAutomaticNode/' + req.params.id;
     details = await runDiscountQuery(req, res, QUERY_FUNCTION_DISCOUNTS, node_id);
   }
-  console.log(details?.data?.discountNode);
   res.send(details?.data?.discountNode || {});
 });
 
