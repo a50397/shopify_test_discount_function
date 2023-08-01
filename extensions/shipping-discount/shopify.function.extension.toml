@@ -1,0 +1,11 @@
+name = "shipping-discount"
+type = "shipping_discounts"
+api_version = "2023-01"
+
+[build]
+command = ""
+path = "dist/function.wasm"
+
+[ui.paths]
+create = "/shipping/:functionId/new"
+details = "/shipping/:functionId/:id"

@@ -28,7 +28,7 @@ import {
 import { useAuthenticatedFetch } from "../../../hooks";
 const todaysDate = new Date();
 // Metafield that will be used for storing function configuration
-const METAFIELD_NAMESPACE = "$app:product-discount";
+const METAFIELD_NAMESPACE = "$app:shipping-discount";
 const METAFIELD_CONFIGURATION_KEY = "function-configuration";
 
 export default function ProductDetailsFetcher() {
@@ -231,7 +231,7 @@ export function ProductDetails({functionId, discount}) {
         return (
             // Render a discount form using Polaris components and the discount app components
             <Page
-                title="Edit order discount"
+                title="Edit Shipping discount"
                 breadcrumbs={[
                     {
                         content: "Discount",
@@ -252,14 +252,14 @@ export function ProductDetails({functionId, discount}) {
                             <MethodCard
                                 discountMethodHidden={true}
                                 readonly={true}
-                                title="Order"
+                                title="Shipping"
                                 discountTitle={discountTitle}
-                                discountClass={DiscountClass.Order}
+                                discountClass={DiscountClass.Shipping}
                                 discountCode={discountCode}
                                 discountMethod={discountMethod}
                             />
                             { /* Collect data for the configuration metafield. */ }
-                            <Card title="Order">
+                            <Card title="Shipping">
                                 <Card.Section>
                                     <Stack>
                                     <TextField label="Discount percentage" {...configuration.percentage} suffix="%" />
@@ -274,7 +274,7 @@ export function ProductDetails({functionId, discount}) {
                             )}
                             <CombinationCard
                                 combinableDiscountTypes={combinesWith}
-                                discountClass={DiscountClass.Order}
+                                discountClass={DiscountClass.Shipping}
                                 discountDescriptor={
                                     discountMethod.value === DiscountMethod.Automatic
                                         ? discountTitle.value
@@ -296,7 +296,7 @@ export function ProductDetails({functionId, discount}) {
                                     discountMethod.value === DiscountMethod.Automatic
                                         ? discountTitle.value
                                         : discountCode.value,
-                                appDiscountType: "Order",
+                                appDiscountType: "Shipping",
                                 isEditing: false,
                             }}
                             performance={{
