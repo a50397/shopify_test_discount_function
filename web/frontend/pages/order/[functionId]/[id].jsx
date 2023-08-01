@@ -51,8 +51,7 @@ export default function ProductDetailsFetcher() {
         .then(data => {
             if (!data) return setDiscount("Error loading discount");
             let metafields = {
-                percentage: 0,
-                quantity: 1
+                percentage: 10,
             }
             if (data.metafields?.edges.length > 0) {
                 try {
@@ -148,8 +147,7 @@ export function ProductDetails({functionId, discount}) {
             startDate: useField(discount?.discount?.startsAt || todaysDate),
             endDate: useField(discount?.discount?.endsAt || null),
             configuration: {
-                quantity: useField(discount.metafields.value.quantity || '1'),
-                percentage: useField(discount.metafields.value.percentage || '0'),
+                percentage: useField(discount.metafields.value.percentage || '10'),
             },
         },
         onSubmit: async (form) => {
@@ -163,7 +161,6 @@ export function ProductDetails({functionId, discount}) {
                     {
                         id: discount.metafields.id,
                         value: JSON.stringify({
-                            quantity: parseInt(form.configuration.quantity),
                             percentage: parseFloat(form.configuration.percentage),
                         }),
                     },
@@ -232,115 +229,112 @@ export function ProductDetails({functionId, discount}) {
             </Layout.Section>
         ) : null;
 
-    return (
-        // Render a discount form using Polaris components and the discount app components
-        <Page
-            title="Edit product discount"
-            breadcrumbs={[
-                {
-                    content: "Discounts",
-                    onAction: () => onBreadcrumbAction(redirect, true),
-                },
-            ]}
-            primaryAction={{
-                content: "Save",
-                onAction: submit,
-                disabled: !dirty,
-                loading: submitting,
-            }}
-        >
-            <Layout>
-                {errorBanner}
-                <Layout.Section>
-                    <form onSubmit={submit}>
-                        <MethodCard
-                            discountMethodHidden={true}
-                            readonly={true}
-                            title="Product"
-                            discountTitle={discountTitle}
-                            discountClass={DiscountClass.Product}
-                            discountCode={discountCode}
-                            discountMethod={discountMethod}
-                        />
-                        { /* Collect data for the configuration metafield. */ }
-                        <Card title="Product">
-                            <Card.Section>
-                                <Stack>
-                                <TextField label="Every Xth item" {...configuration.quantity} />
-                                <TextField label="Discount percentage" {...configuration.percentage} suffix="%" />
-                                </Stack>
-                            </Card.Section>
-                        </Card>
-                        {discountMethod.value === DiscountMethod.Code && (
-                            <UsageLimitsCard
-                                totalUsageLimit={usageTotalLimit}
-                                oncePerCustomer={usageOncePerCustomer}
+        return (
+            // Render a discount form using Polaris components and the discount app components
+            <Page
+                title="Create order discount"
+                breadcrumbs={[
+                    {
+                        content: "Discount",
+                        onAction: () => onBreadcrumbAction(redirect, true),
+                    },
+                ]}
+                primaryAction={{
+                    content: "Save",
+                    onAction: submit,
+                    disabled: !dirty,
+                    loading: submitting,
+                }}
+            >
+                <Layout>
+                    {errorBanner}
+                    <Layout.Section>
+                        <form onSubmit={submit}>
+                            <MethodCard
+                                title="Order"
+                                discountTitle={discountTitle}
+                                discountClass={DiscountClass.Order}
+                                discountCode={discountCode}
+                                discountMethod={discountMethod}
                             />
-                        )}
-                        <CombinationCard
-                            combinableDiscountTypes={combinesWith}
-                            discountClass={DiscountClass.Product}
-                            discountDescriptor={
-                                discountMethod.value === DiscountMethod.Automatic
-                                    ? discountTitle.value
-                                    : discountCode.value
-                            }
+                            { /* Collect data for the configuration metafield. */ }
+                            <Card title="Order">
+                                <Card.Section>
+                                    <Stack>
+                                    <TextField label="Discount percentage" {...configuration.percentage} suffix="%" />
+                                    </Stack>
+                                </Card.Section>
+                            </Card>
+                            {discountMethod.value === DiscountMethod.Code && (
+                                <UsageLimitsCard
+                                    totalUsageLimit={usageTotalLimit}
+                                    oncePerCustomer={usageOncePerCustomer}
+                                />
+                            )}
+                            <CombinationCard
+                                combinableDiscountTypes={combinesWith}
+                                discountClass={DiscountClass.Order}
+                                discountDescriptor={
+                                    discountMethod.value === DiscountMethod.Automatic
+                                        ? discountTitle.value
+                                        : discountCode.value
+                                }
+                            />
+                            <ActiveDatesCard
+                                startDate={startDate}
+                                endDate={endDate}
+                                timezoneAbbreviation="EST"
+                            />
+                        </form>
+                    </Layout.Section>
+                    <Layout.Section secondary>
+                        <SummaryCard
+                            header={{
+                                discountMethod: discountMethod.value,
+                                discountDescriptor:
+                                    discountMethod.value === DiscountMethod.Automatic
+                                        ? discountTitle.value
+                                        : discountCode.value,
+                                appDiscountType: "Order",
+                                isEditing: false,
+                            }}
+                            performance={{
+                                status: DiscountStatus.Scheduled,
+                                usageCount: 0,
+                            }}
+                            minimumRequirements={{
+                                requirementType: requirementType.value,
+                                subtotal: requirementSubtotal.value,
+                                quantity: requirementQuantity.value,
+                                currencyCode: currencyCode,
+                            }}
+                            usageLimits={{
+                                oncePerCustomer: usageOncePerCustomer.value,
+                                totalUsageLimit: usageTotalLimit.value,
+                            }}
+                            activeDates={{
+                                startDate: startDate.value,
+                                endDate: endDate.value,
+                            }}
                         />
-                        <ActiveDatesCard
-                            startDate={startDate}
-                            endDate={endDate}
-                            timezoneAbbreviation="EST"
+                    </Layout.Section>
+                    <Layout.Section>
+                        <PageActions
+                            primaryAction={{
+                                content: "Save discount",
+                                onAction: submit,
+                                disabled: !dirty,
+                                loading: submitting,
+                            }}
+                            secondaryActions={[
+                                {
+                                    content: "Discard",
+                                    onAction: () => onBreadcrumbAction(redirect, true),
+                                },
+                            ]}
                         />
-                    </form>
-                </Layout.Section>
-                <Layout.Section secondary>
-                    <SummaryCard
-                        header={{
-                            discountMethod: discountMethod.value,
-                            discountDescriptor:
-                                discountMethod.value === DiscountMethod.Automatic
-                                    ? discountTitle.value
-                                    : discountCode.value,
-                            appDiscountType: "Volume",
-                            isEditing: false,
-                        }}
-                        performance={{
-                            status: DiscountStatus.Scheduled,
-                            usageCount: 0,
-                        }}
-                        minimumRequirements={{
-                            requirementType: requirementType.value,
-                            subtotal: requirementSubtotal.value,
-                            quantity: requirementQuantity.value,
-                            currencyCode: currencyCode,
-                        }}
-                        usageLimits={{
-                            oncePerCustomer: usageOncePerCustomer.value,
-                            totalUsageLimit: usageTotalLimit.value,
-                        }}
-                        activeDates={{
-                            startDate: startDate.value,
-                            endDate: endDate.value,
-                        }}
-                    />
-                </Layout.Section>
-                <Layout.Section>
-                    <PageActions
-                        primaryAction={{
-                            content: "Save discount",
-                            onAction: submit,
-                            disabled: !dirty,
-                            loading: submitting,
-                        }}
-                        secondaryActions={[
-                            {
-                                content: "Discard",
-                                onAction: () => onBreadcrumbAction(redirect, true),
-                            },
-                        ]}
-                    />
-                </Layout.Section>
-            </Layout>
-        </Page>
-    );
-}
+                    </Layout.Section>
+                </Layout>
+            </Page>
+        );
+    }
