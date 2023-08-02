@@ -1,9 +1,9 @@
 {
   "HomePage": {
     "heading": "Test function discount app 🎉",
-    "learnMore": "Note 1: To create shipping discounts, you must enable the shipping_discount_functions beta flag.<br/ > <br/ > Note 2: Shipping function discount codes will crash the checkout - <GitHubIssueLink>Github issue</GitHubIssueLink>",
+    "learnMore": "Note 1: To create shipping discounts, you must enable the shipping_discount_functions beta flag.<br/ > Note 2: Shipping function discount codes will crash the checkout - <GitHubIssueLink>Github issue</GitHubIssueLink>",
     "startPopulatingYourApp": "Supported discount types are:<br/ > - product - code and automatic<br/ > - order - code and automatic<br/ > - shipping - code and automatic",
-    "title": "App name",
+    "title": "Test discount function app",
     "trophyAltText": "Nice work on building a Shopify app",
     "yourAppIsReadyToExplore": "This is a simple test application that allows you to create function discounts."
   },

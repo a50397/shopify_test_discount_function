@@ -1,9 +1,9 @@
 {
   "HomePage": {
-    "heading": "Bravo pour l’application Shopify que vous avez créée 🎉",
-    "learnMore": "Découvrez comment concevoir votre application dans <ShopifyTutorialLink>ce tutoriel Shopify</ShopifyTutorialLink> 📚",
-    "startPopulatingYourApp": "Vous souhaitez vous lancer ? Commencez à remplir votre application d’exemples de produits à afficher et tester dans votre boutique.",
-    "title": "Nom de l’application",
+    "heading": "Application de test de réduction de la fonction 🎉",
+    "learnMore": "Remarque 1: Pour créer des remises sur les frais d'expédition, vous devez activer l'indicateur bêta shipping_discount_functions.<br/ > Remarque 2: Les codes de réduction de la fonction d'expédition feront planter le paiement - <GitHubIssueLink>problème github</GitHubIssueLink>",
+    "startPopulatingYourApp": "Les types de remise pris en charge sont:<br/ > - produit - code et automatique<br/ > - ordre - code et automatique<br/ > - expédition - code et automatique",
+    "title": "Application de test de réduction de la fonction",
     "trophyAltText": "Bravo pour l’application Shopify que vous avez créée",
     "yourAppIsReadyToExplore": "Votre application est prête à être explorée ! Elle contient tout ce dont vous avez besoin pour vous lancer, y compris le <PolarisLink>système de design Polaris</PolarisLink>, la <AdminApiLink>Shopify Admin API</AdminApiLink> ainsi que la bibliothèque et les composants d’IU <AppBridgeLink>App Bridge</AppBridgeLink>."
   },
