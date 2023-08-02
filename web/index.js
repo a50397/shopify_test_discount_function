@@ -54,7 +54,7 @@ app.post("/api/discounts/code", async (req, res) => {
 });
 // Endpoint to update code-based discounts
 app.post("/api/discounts/code/*", async (req, res) => {
-  const id = req.params[0].replace('gid:/', 'gid://');
+  const id = 'gid://' + req.params[0];
   await runDiscountMutation(req, res, UPDATE_CODE_MUTATION, id);
 });
 // Endpoint to create automatic discounts
@@ -63,7 +63,7 @@ app.post("/api/discounts/automatic", async (req, res) => {
 });
 // Endpoint to update automatic discounts
 app.post("/api/discounts/automatic/*", async (req, res) => {
-  const id = req.params[0].replace('gid:/', 'gid://');
+  const id = 'gid://' + req.params[0];
   await runDiscountMutation(req, res, UPDATE_AUTOMATIC_MUTATION, id);
 });
 // Endpoint to query discount details

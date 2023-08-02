@@ -168,7 +168,7 @@ export function ProductDetails({functionId, discount}) {
 
             let response;
             if (form.discountMethod === DiscountMethod.Automatic) {
-                response = await authenticatedFetch(`/api/discounts/automatic/${discount?.discount?.discountId}`, {
+                response = await authenticatedFetch(`/api/discounts/automatic/${discount?.discount?.discountId.replace('gid://','')}`, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({
@@ -181,7 +181,7 @@ export function ProductDetails({functionId, discount}) {
             } else {
                 input.appliesOncePerCustomer = form.usageOncePerCustomer;
                 input.usageLimit = form.usageTotalLimit ? Number.parseInt(form.usageTotalLimit) : null;
-                response = await authenticatedFetch(`/api/discounts/code/${discount?.discount?.discountId}`, {
+                response = await authenticatedFetch(`/api/discounts/code/${discount?.discount?.discountId.replace('gid://','')}`, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({
