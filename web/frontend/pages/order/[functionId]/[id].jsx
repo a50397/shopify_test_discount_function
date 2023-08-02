@@ -89,7 +89,11 @@ export default function ProductDetailsFetcher() {
     if (!discount) {
         return <Spinner accessibilityLabel="Discount loading..." size="large" />;
     } else if (discount === "Error loading discount") {
-        return <div>Error loading discount id {id}</div>;
+        return <Layout>
+            <Layout.Section>
+                <Banner title="Error loading discount" status="critical" />
+            </Layout.Section>
+        </Layout>;
     }
 
     return <ProductDetails functionId={functionId} discount={discount} />;
