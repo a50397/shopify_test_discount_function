@@ -13,8 +13,6 @@ import { useTranslation, Trans } from "react-i18next";
 
 import { trophyImage } from "../assets";
 
-import { ProductsCard } from "../components";
-
 export default function HomePage() {
   const { t } = useTranslation();
   return (
@@ -56,19 +54,26 @@ export default function HomePage() {
                       }}
                     />
                   </p>
-                  <p>{t("HomePage.startPopulatingYourApp")}</p>
                   <p>
+                    <Trans
+                      i18nKey="HomePage.startPopulatingYourApp"
+                    />
+                  </p>
+                  <p></p>
+                  <p>
+                    <small>
                     <Trans
                       i18nKey="HomePage.learnMore"
                       components={{
-                        ShopifyTutorialLink: (
+                        GitHubIssueLink: (
                           <Link
-                            url="https://shopify.dev/apps/getting-started/add-functionality"
+                            url="https://github.com/Shopify/core-issues/issues/44760"
                             external
                           />
                         ),
                       }}
                     />
+                    </small>
                   </p>
                 </TextContainer>
               </Stack.Item>
@@ -83,9 +88,6 @@ export default function HomePage() {
               </Stack.Item>
             </Stack>
           </Card>
-        </Layout.Section>
-        <Layout.Section>
-          <ProductsCard />
         </Layout.Section>
       </Layout>
     </Page>
