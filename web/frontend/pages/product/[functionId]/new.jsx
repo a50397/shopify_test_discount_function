@@ -194,7 +194,7 @@ export default function ProductNew() {
                         <Card title="Product">
                             <Card.Section>
                                 <Stack>
-                                <TextField label="Every Xth item" {...configuration.quantity} />
+                                <TextField label="Minimum quantity" {...configuration.quantity} />
                                 <TextField label="Discount percentage" {...configuration.percentage} suffix="%" />
                                 </Stack>
                             </Card.Section>
