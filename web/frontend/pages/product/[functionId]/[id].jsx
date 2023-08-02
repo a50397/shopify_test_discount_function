@@ -104,6 +104,8 @@ export function ProductDetails({functionId, discount}) {
     const currencyCode = CurrencyCode.Cad;
     const authenticatedFetch = useAuthenticatedFetch();
 
+    const isCodeDiscount = () => discount?.discount?.discountId.includes('Code')
+
     // Define base discount form fields
     const {
         fields: {
@@ -130,8 +132,7 @@ export function ProductDetails({functionId, discount}) {
         fields: {
             discountTitle: useField(discount?.discount?.title || ''),
             discountMethod: useField(
-                discount?.discount?.discountId.includes('Code') ?
-                    DiscountMethod.Code : DiscountMethod.Automatic
+                isCodeDiscount() ? DiscountMethod.Code : DiscountMethod.Automatic
             ),
             discountCode: useField(discount?.discount?.title || ''),
             combinesWith: useField({
@@ -198,7 +199,7 @@ export function ProductDetails({functionId, discount}) {
             }
 
             const data = (await response.json()).data;
-            const remoteErrors = discount?.discount?.discountId.includes('Code') ?
+            const remoteErrors = isCodeDiscount() ?
                 data.discountCodeAppUpdate.userErrors :
                 data.discountAutomaticAppUpdate.userErrors;
             if (remoteErrors.length > 0) {
