@@ -1,7 +1,8 @@
 ## Simple Shopify discount function
 
-A simple discount app that will create `Apply X% discount on every Nth line in an order` discounts. To change this logic, edit [extensions/product-discount/src/index.js](https://github.com/a50397/shopify_test_discount_function/blob/f20c58c5ce223bc6076e9a6b23aa51e95a79a8c6/extensions/product-discount/src/index.js#L20). 
-Modification of discount parameters for existing discounts is not implemented.
+A simple discount app that can create product, order and shipping function discounts. 
+In order to create shipping discounts, you'll have to enable the `shipping_discount_functions` beta flag. 
+Also, note that applying shipping discount codes will currently crash checkout web - [github issue](https://github.com/Shopify/core-issues/issues/44760)
 
 Installation:
 
