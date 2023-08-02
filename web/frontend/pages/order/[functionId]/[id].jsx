@@ -24,6 +24,7 @@ import {
     TextField,
     Stack,
     PageActions,
+    Spinner,
 } from "@shopify/polaris";
 import { useAuthenticatedFetch } from "../../../hooks";
 const todaysDate = new Date();
@@ -86,7 +87,7 @@ export default function ProductDetailsFetcher() {
     }, []);
 
     if (!discount) {
-        return <div>Loading discount id {id}...</div>;
+        return <Spinner accessibilityLabel="Discount loading..." size="large" />;
     } else if (discount === "Error loading discount") {
         return <div>Error loading discount id {id}</div>;
     }
