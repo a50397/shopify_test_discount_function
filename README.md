@@ -1,4 +1,4 @@
-## Simple Shopify discount function
+## Simple discount function app
 
 A simple discount app that can create product, order and shipping function discounts. 
 In order to create shipping discounts, you'll have to enable the `shipping_discount_functions` beta flag. 
